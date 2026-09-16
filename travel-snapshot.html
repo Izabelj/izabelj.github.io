@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Travel Snapshot – Madrid</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 50px 24px;
+    }
+
+    .hero {
+      background: white;
+      padding: 40px;
+      border-radius: 18px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .intro {
+      font-size: 18px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+    }
+
+    .label {
+      font-size: 14px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .value {
+      font-size: 34px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .small {
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .error {
+      color: #b00020;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <section class="hero">
+      <div class="label">Travel Snapshot</div>
+
+      <h1>Madrid just nu</h1>
+
+      <p class="intro">
+        Den här webbappen hämtar aktuell data från två olika API:er.
+        Open-Meteo används för väderdata och Frankfurter används för aktuell
+        växelkurs mellan euro och svenska kronor.
+      </p>
+
+      <button id="refreshButton">
+        Uppdatera data
+      </button>
+
+      <div class="status" id="status">
+        Hämtar aktuell data...
+      </div>
+    </section>
+
+
+    <section class="grid">
+
+      <div class="card">
+        <div class="label">Väder i Madrid</div>
+
+        <div class="value" id="temperature">
+          ...
+        </div>
+
+        <div class="small">
+          <div id="weatherText">Hämtar väder...</div>
+          <div id="weatherTime"></div>
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div class="label">Valuta</div>
+
+        <div class="value" id="exchangeRate">
+          ...
+        </div>
+
+        <div class="small">
+          <div>1 EUR i svenska kronor</div>
+          <div id="rateDate"></div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <section class="card" style="margin-top: 20px;">
+      <div class="label">API-källor</div>
+
+      <p class="small">
+        Väderdata hämtas från Open-Meteo API.
+        Valutadata hämtas från Frankfurter API.
+      </p>
+    </section>
+
+  </main>
+
+
+  <script>
+    const temperatureElement = document.getElementById("temperature");
+    const weatherTextElement = document.getElementById("weatherText");
+    const weatherTimeElement = document.getElementById("weatherTime");
+
+    const exchangeRateElement = document.getElementById("exchangeRate");
+    const rateDateElement = document.getElementById("rateDate");
+
+    const statusElement = document.getElementById("status");
+    const refreshButton = document.getElementById("refreshButton");
+
+
+    function weatherCodeToText(code) {
+      const weatherCodes = {
+        0: "Klar himmel",
+        1: "Mestadels klart",
+        2: "Delvis molnigt",
+        3: "Mulet",
+        45: "Dimma",
+        48: "Dimma",
+        51: "Lätt duggregn",
+        53: "Duggregn",
+        55: "Kraftigt duggregn",
+        61: "Lätt regn",
+        63: "Regn",
+        65: "Kraftigt regn",
+        71: "Lätt snöfall",
+        73: "Snöfall",
+        75: "Kraftigt snöfall",
+        80: "Regnskurar",
+        81: "Regnskurar",
+        82: "Kraftiga regnskurar",
+        95: "Åska"
+      };
+
+      return weatherCodes[code] || "Okänt väder";
+    }
+
+
+    async function fetchWeather() {
+      const weatherUrl =
+        "https://api.open-meteo.com/v1/forecast" +
+        "?latitude=40.4168" +
+        "&longitude=-3.7038" +
+        "&current=temperature_2m,weather_code" +
+        "&timezone=Europe%2FMadrid";
+
+      const response = await fetch(weatherUrl);
+
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta väderdata");
+      }
+
+      const data = await response.json();
+
+      const temperature = data.current.temperature_2m;
+      const weatherCode = data.current.weather_code;
+      const time = data.current.time;
+
+      temperatureElement.textContent =
+        temperature.toLocaleString("sv-SE") + " °C";
+
+      weatherTextElement.textContent =
+        "Väder: " + weatherCodeToText(weatherCode);
+
+      weatherTimeElement.textContent =
+        "Senast uppdaterad: " + time;
+    }
+
+
+    async function fetchExchangeRate() {
+      const exchangeUrl =
+        "https://api.frankfurter.dev/v2/rate/EUR/SEK";
+
+      const response = await fetch(exchangeUrl);
+
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta valutadata");
+      }
+
+      const data = await response.json();
+
+      exchangeRateElement.textContent =
+        "1 EUR = " +
+        data.rate.toLocaleString("sv-SE", {
+          minimumFractionDigits: 3,
+          maximumFractionDigits: 3
+        }) +
+        " SEK";
+
+      rateDateElement.textContent =
+        "Datum: " + data.date;
+    }
+
+
+    async function loadData() {
+      statusElement.textContent =
+        "Hämtar aktuell data...";
+
+      statusElement.classList.remove("error");
+
+      try {
+        await Promise.all([
+          fetchWeather(),
+          fetchExchangeRate()
+        ]);
+
+        statusElement.textContent =
+          "Data hämtad från båda API:erna.";
+      } catch (error) {
+        console.error(error);
+
+        statusElement.textContent =
+          "Något gick fel när datan skulle hämtas.";
+
+        statusElement.classList.add("error");
+      }
+    }
+
+
+    refreshButton.addEventListener("click", loadData);
+
+    loadData();
+  </script>
+
+</body>
+</html>
