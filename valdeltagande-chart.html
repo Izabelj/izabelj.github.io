@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valdeltagande 2018 och 2022</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Valdeltagandet minskade i Sveriges tre största städer</h1>
+
+  <p>
+    Jämförelse av valdeltagandet 2018 och 2022 i Stockholm,
+    Göteborg och Malmö.
+  </p>
+
+  <canvas id="valdeltagandeChart"></canvas>
+
+  <script>
+    const ctx = document.getElementById("valdeltagandeChart");
+
+    new Chart(ctx, {
+      type: "bar",
+
+      data: {
+        labels: ["Stockholm", "Göteborg", "Malmö"],
+
+        datasets: [
+          {
+            label: "2018",
+            data: [87.32, 84.28, 82.01]
+          },
+          {
+            label: "2022",
+            data: [84.04, 80.71, 77.22]
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: "Valdeltagande (%)"
+            }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
