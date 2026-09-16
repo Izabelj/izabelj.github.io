@@ -3,38 +3,319 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Valdeltagande 2018 och 2022</title>
+
+  <title>Valdeltagandet i Sveriges tre största städer</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 50px auto;
-      padding: 20px;
+      background: #f7f7f7;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 50px 25px 80px;
+    }
+
+    .hero {
+      background: white;
+      padding: 45px;
+      border-radius: 18px;
+      margin-bottom: 25px;
     }
 
     h1 {
-      margin-bottom: 10px;
+      font-size: 42px;
+      line-height: 1.1;
+      margin: 0 0 20px;
     }
 
-    p {
+    h2 {
+      font-size: 25px;
+      margin-top: 0;
+    }
+
+    .intro {
+      font-size: 19px;
+      color: #444;
+      max-width: 750px;
+    }
+
+    .section {
+      background: white;
+      padding: 35px 40px;
+      border-radius: 18px;
+      margin-bottom: 22px;
+    }
+
+    .highlight {
+      background: #eeeeee;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f2f2f2;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      margin-top: 30px;
+    }
+
+    .metadata {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .meta-box {
+      background: #f3f3f3;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .meta-box strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .source {
+      font-size: 15px;
       color: #555;
+    }
+
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 32px;
+      }
+
+      .hero,
+      .section {
+        padding: 25px;
+      }
+
+      .metadata {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-container {
+        height: 400px;
+      }
+
+      table {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Valdeltagandet minskade i Sveriges tre största städer</h1>
+  <main class="container">
 
-  <p>
-    Jämförelse av valdeltagandet 2018 och 2022 i Stockholm,
-    Göteborg och Malmö.
-  </p>
+    <section class="hero">
+      <h1>Valdeltagandet minskade i Sveriges tre största städer</h1>
 
-  <canvas id="valdeltagandeChart"></canvas>
+      <p class="intro">
+        En jämförelse av valdeltagandet i riksdagsvalet 2018 och 2022
+        i Stockholm, Göteborg och Malmö. I underlaget minskade
+        valdeltagandet i samtliga tre städer och den största
+        minskningen syns i Malmö.
+      </p>
+    </section>
+
+
+    <section class="section">
+      <h2>Varför jag valde ämnet</h2>
+
+      <p>
+        Jag har valt data om valdeltagande i riksdagsvalet 2018 och
+        2022 för Stockholm, Göteborg och Malmö.
+      </p>
+
+      <p>
+        Jag valde detta eftersom det är lätt att jämföra städer mellan
+        två val och det går tydligt att se om valdeltagandet har ökat
+        eller minskat över tid.
+      </p>
+
+      <div class="metadata">
+        <div class="meta-box">
+          <strong>Källa</strong>
+          Valmyndigheten
+        </div>
+
+        <div class="meta-box">
+          <strong>Tidsperiod</strong>
+          2018–2022
+        </div>
+
+        <div class="meta-box">
+          <strong>Enhet</strong>
+          Procent valdeltagande
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section">
+      <h2>Frågeställning</h2>
+
+      <p>
+        Hur förändrades valdeltagandet i Stockholm, Göteborg och Malmö
+        mellan riksdagsvalet 2018 och 2022?
+      </p>
+    </section>
+
+
+    <section class="section">
+      <h2>Undersökning av datan</h2>
+
+      <p>
+        Datan visar valdeltagandet i riksdagsvalet i Stockholm,
+        Göteborg och Malmö år 2018 och 2022.
+      </p>
+
+      <p>
+        Jag jämför samma valtyp och samma geografiska områden mellan
+        de två valåren.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Stad</th>
+            <th>2018</th>
+            <th>2022</th>
+            <th>Förändring</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Stockholm</td>
+            <td>87,32 %</td>
+            <td>84,04 %</td>
+            <td>−3,28 procentenheter</td>
+          </tr>
+
+          <tr>
+            <td>Göteborg</td>
+            <td>84,28 %</td>
+            <td>80,71 %</td>
+            <td>−3,57 procentenheter</td>
+          </tr>
+
+          <tr>
+            <td>Malmö</td>
+            <td>82,01 %</td>
+            <td>77,22 %</td>
+            <td>−4,79 procentenheter</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        I underlaget minskade valdeltagandet i alla tre städer.
+        Minskningen var störst i Malmö, där valdeltagandet sjönk
+        med 4,79 procentenheter.
+      </div>
+    </section>
+
+
+    <section class="section">
+      <h2>Visualisering</h2>
+
+      <p>
+        Jag valde ett stapeldiagram med två staplar per stad – en för
+        2018 och en för 2022. Det gör det enklare att jämföra
+        valdeltagandet mellan valen och mellan de tre städerna.
+      </p>
+
+      <div class="chart-container">
+        <canvas id="valdeltagandeChart"></canvas>
+      </div>
+    </section>
+
+
+    <section class="section">
+      <h2>Slutsats</h2>
+
+      <p>
+        Jämförelsen visar en nedgång i valdeltagandet i Stockholm,
+        Göteborg och Malmö mellan 2018 och 2022.
+      </p>
+
+      <p>
+        Stockholm minskade med 3,28 procentenheter, Göteborg med
+        3,57 procentenheter och Malmö med 4,79 procentenheter.
+      </p>
+    </section>
+
+
+    <section class="section">
+      <h2>Journalistisk vinkel</h2>
+
+      <p>
+        Min vinkel är:
+        <strong>
+          Valdeltagandet minskade i Sveriges tre största städer –
+          störst var minskningen i Malmö.
+        </strong>
+      </p>
+
+      <p>
+        Det ger en tydlig ingång till materialet eftersom grafen
+        snabbt visar både den gemensamma utvecklingen i de tre
+        städerna och vilken stad som hade den största förändringen.
+      </p>
+    </section>
+
+
+    <section class="section">
+      <h2>Källa</h2>
+
+      <p class="source">
+        Källa: Valmyndigheten. Data om valdeltagande i riksdagsvalen
+        2018 och 2022.
+      </p>
+
+      <p class="source">
+        Bearbetning och visualisering gjord för Growth Toolbox.
+      </p>
+    </section>
+
+  </main>
+
 
   <script>
     const ctx = document.getElementById("valdeltagandeChart");
@@ -48,24 +329,57 @@
         datasets: [
           {
             label: "2018",
-            data: [87.32, 84.28, 82.01]
+            data: [87.32, 84.28, 82.01],
+            backgroundColor: "#7cc4e4"
           },
           {
             label: "2022",
-            data: [84.04, 80.71, 77.22]
+            data: [84.04, 80.71, 77.22],
+            backgroundColor: "#e79aaa"
           }
         ]
       },
 
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+          legend: {
+            position: "top"
+          },
+
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return (
+                  context.dataset.label +
+                  ": " +
+                  context.raw.toLocaleString("sv-SE", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }) +
+                  " %"
+                );
+              }
+            }
+          }
+        },
 
         scales: {
           y: {
-            beginAtZero: false,
+            min: 0,
+            max: 100,
+
             title: {
               display: true,
               text: "Valdeltagande (%)"
+            },
+
+            ticks: {
+              callback: function(value) {
+                return value + " %";
+              }
             }
           }
         }
