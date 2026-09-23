@@ -1,0 +1,140 @@
+const fs = require("fs");
+const cheerio = require("cheerio");
+
+const urls = [
+  "https://www.allabolag.se/bransch-s%C3%B6k?q=Reklambyr%C3%A5",
+  "https://www.allabolag.se/bransch-s%C3%B6k?q=Reklambyr%C3%A5&page=2",
+  "https://www.allabolag.se/bransch-s%C3%B6k?q=Reklambyr%C3%A5&page=3",
+  "https://www.allabolag.se/bransch-s%C3%B6k?q=Reklambyr%C3%A5&page=4",
+  "https://www.allabolag.se/bransch-s%C3%B6k?q=Reklambyr%C3%A5&page=5"
+];
+
+
+const proxy = null;
+
+const sleep = ms =>
+  new Promise(resolve => setTimeout(resolve, ms));
+
+async function scrapePage(url) {
+  const options = {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+
+      // Be om en färsk kopia
+      "Cache-Control": "no-cache",
+      "Pragma": "no-cache"
+    },
+
+    // Använd inte Node:s fetch-cache
+    cache: "no-store"
+  };
+
+  // Här kan proxy läggas till senare om det behövs.
+  // Ingen proxy används nu.
+  if (proxy) {
+    options.dispatcher = proxy;
+  }
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error(`HTTP-fel: ${response.status}`);
+  }
+
+  const html = await response.text();
+  const $ = cheerio.load(html);
+
+  const companies = [];
+
+  $(".SearchResultCard-iconDataContainer").each((i, element) => {
+    const card = $(element).parent();
+
+    const name = card.find("h2").first().text().trim();
+
+    let orgnr = "";
+    let phone = "";
+    let address = "";
+
+    card.find(".CardHeader-propertyList").each((i, property) => {
+      const text = $(property).text().trim();
+
+      if (text.startsWith("Org.nr")) {
+        orgnr = text.replace("Org.nr", "").trim();
+
+      } else if ($(property).hasClass("CardHeader-phone")) {
+        phone = text.replace("Telefon", "").trim();
+
+      } else if (text && !text.startsWith("Telefon")) {
+        address = text;
+      }
+    });
+
+    if (name) {
+      companies.push({
+        name,
+        orgnr,
+        phone,
+        address
+      });
+    }
+  });
+
+  return companies;
+}
+
+async function scrape() {
+  const allCompanies = [];
+
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
+
+    console.log(`Hämtar sida ${i + 1}...`);
+
+    try {
+      const companies = await scrapePage(url);
+
+      console.log(
+        `Sida ${i + 1} gav ${companies.length} företag`
+      );
+
+      allCompanies.push(...companies);
+
+    } catch (error) {
+      console.error(
+        `Fel på sida ${i + 1}: ${error.message}`
+      );
+    }
+
+    // Vänta 500 ms innan nästa sida
+    if (i < urls.length - 1) {
+      await sleep(500);
+    }
+  }
+
+  function csv(value) {
+    return `"${String(value || "").replaceAll('"', '""')}"`;
+  }
+
+  const rows = [
+    ["name", "orgnr", "phone", "address"],
+    ...allCompanies.map(company => [
+      company.name,
+      company.orgnr,
+      company.phone,
+      company.address
+    ])
+  ];
+
+  const output = rows
+    .map(row => row.map(csv).join(","))
+    .join("\n");
+
+  fs.writeFileSync("foretag.csv", output, "utf8");
+
+  console.log(
+    `Klart! Sparade totalt ${allCompanies.length} företag till foretag.csv`
+  );
+}
+
+scrape().catch(console.error);
